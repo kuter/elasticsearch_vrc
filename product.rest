@@ -1,0 +1,110 @@
+http://localhost:9200
+Accept: application/x-ndjson
+--
+
+# Creating index
+--
+PUT /product
+
+# Check if index exists
+--
+HEAD /product
+
+# Deleting indicies
+--
+DELETE /product
+
+# adding new document without ID
+--
+POST /product/_doc
+{
+    "name": "Processing Events with Logstash",
+    "instructor": {
+        "firstName": "John",
+        "lastName": "Smith"
+    }
+}
+
+# addming new document with ID
+--
+POST /product/_doc/1
+{
+    "name": "Complete Guide to Elasticsearch",
+    "instructor": {
+        "firstName": "John",
+        "lastName": "Smith"
+    }
+}
+
+# Getting documents by ID
+--
+GET /product/_doc/1
+
+# Replacing existing document
+--
+PUT /product/_doc/1
+{
+    "name": "Complete Guide to Elasticsearch",
+    "instructor": {
+        "firstName": "John",
+        "lastName": "Smith"
+    },
+    "price": 195
+}
+
+# Updating existing document
+--
+POST /product/_doc/1/_update
+{
+    "doc": {
+        "price": 95,
+        "tags": [
+            "Elasticsearch"
+        ]
+    }
+}
+
+# Scripted updated
+--
+POST /product/_doc/1/_update
+{
+    "script": "ctx._source.price += 10"
+}
+
+# Upserts (update object if exists otherwise create it with price 100)
+--
+POST /product/_doc/1/_update
+{
+    "script": "ctx._source.price += 5",
+    "upsert": {
+        "price": 100
+    }
+}
+
+# Deleting documents by query
+--
+POST /product/_delete_by_query
+{
+    "query": {
+        "match": {
+            "name": "Elasticsearch"
+        }
+    }
+}
+
+# Batch processing
+--
+http://localhost:9200
+POST /product/_doc/_bulk
+{ "index": { "_id": "100" } }
+{ "price": 100 }
+{ "index": { "_id": "101" } }
+{ "price": 101 }
+
+# Batch updating and deleting object
+--
+http://localhost:9200
+POST /product/_doc/_bulk
+{ "update": { "_id": "100" } }
+{ "doc": { "price": 1000 } }
+{ "delete": { "_id": 101 } }
