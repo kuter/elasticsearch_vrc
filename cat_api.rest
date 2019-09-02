@@ -1,0 +1,14 @@
+http://127.0.0.1:9200
+--
+
+# yellow status means that there is no replicas (data might be lost), green means that everything is OK, red means one or more nodes are broken
+--
+GET /_cat/health?v
+
+--
+GET /_cat/nodes?v
+
+# Retrieving indicies
+--
+GET /_cat/indices?v
+
