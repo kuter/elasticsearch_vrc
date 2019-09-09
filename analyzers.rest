@@ -96,3 +96,56 @@ POST /analyzers_test/_analyze
     "analyzer": "my_analyzer",
     "text": "I'm in the mood for drinking <strong>semi-dry</strong> red wine!"
 }
+
+# create custom mapping for fields
+--
+PUT /analyzers_test/_mapping
+{
+    "properties": {
+        "description": {
+            "type": "text",
+            "analyzer": "my_analyzer"
+        },
+        "teaser": {
+            "type": "text",
+            "analyzer": "standard"
+        }
+    }
+}
+
+# check if mapping exists
+--
+GET /analyzers_test/_mapping
+
+--
+POST /analyzers_test/_doc/1
+{
+    "description": "drinking",
+    "teasers": "drinking"
+}
+
+# will find document
+--
+POST /analyzers_test/_search
+{
+    "query": {
+        "term": {
+            "teasers": {
+                "value": "drinking"
+            }
+        }
+    }
+}
+
+# won't find document
+--
+POST /analyzers_test/_search
+{
+    "query": {
+        "term": {
+            "description": {
+                "value": "drink"
+            }
+        }
+    }
+}
