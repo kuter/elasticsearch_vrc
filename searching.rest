@@ -1,0 +1,57 @@
+http://127.0.0.1:9200
+--
+
+--
+POST /product/_search
+{
+    "explain": true,
+    "query": {
+        "match": {
+            "price": 152
+        }
+    }
+}
+
+# match all documents
+--
+POST /product/_search
+{
+    "size": 2,
+    "query": {
+        "match_all": {}
+    }
+}
+
+# debugging queries
+--
+POST /product/_doc/1/_explain
+{
+    "query": {
+        "term": {
+            "price": 152
+        }
+    }
+}
+
+# full-text search query (case insensitive)
+--
+POST /product/_search
+{
+    "query": {
+        "match": {
+            "name": "lobster"
+        }
+    }
+}
+
+
+# we're lookup into inverted index (exact value)
+--
+POST /product/_search
+{
+    "query": {
+        "term": {
+            "name": "lobster"
+        }
+    }
+}
