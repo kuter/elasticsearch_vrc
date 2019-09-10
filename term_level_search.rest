@@ -1,0 +1,164 @@
+http://127.0.0.1:9200
+--
+
+# search for exact matching
+--
+POST /product/_search
+{
+    "query": {
+        "term": {
+            "is_active": true
+        }
+    }
+}
+
+# is equal to
+--
+POST /product/_search
+{
+    "query": {
+        "term": {
+            "is_active": {
+                "value": true
+            }
+        }
+    }
+}
+
+# searching for multiple terms
+--
+POST /product/_search
+{
+    "query": {
+        "terms": {
+            "tags.keyword": [
+                "Soup",
+                "Cake"
+            ]
+        }
+    }
+}
+
+# retrieving documents based on IDs
+--
+POST /product/_search
+{
+    "explain": true,
+    "query": {
+        "ids": {
+            "values": [1, 2, 3]
+        }
+    }
+}
+
+# matching documents with range values
+--
+POST /product/_search
+{
+    "query": {
+        "range": {
+            "in_stock": {
+                "gte": 1,
+                "lte": 5
+            }
+        }
+    }
+}
+
+# searching with custom datetime format
+--
+POST /product/_search
+{
+    "query": {
+        "range": {
+            "created": {
+                "gte": "01-01-2010",
+                "lte": "31-12-2010",
+                "format": "dd-MM-yyyy"
+            }
+        }
+    }
+}
+
+# working with relative dates (one year and one day) https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#date-math
+--
+POST /product/_search
+{
+    "query": {
+        "range": {
+            "created": {
+                "lte": "2010/01/01||-1y-1d"
+            }
+        }
+    }
+}
+
+# get documents with creation date one year ago
+--
+POST /product/_search
+{
+    "query": {
+        "range": {
+            "created": {
+                "gte": "now/M-2y"
+            }
+        }
+    }
+}
+
+# matching documents with non-null values
+--
+POST /product/_search
+{
+    "query": {
+        "exists": {
+            "field": "tags"
+        }
+    }
+}
+
+# matching based on prefixes
+--
+POST /product/_search
+{
+    "query": {
+        "prefix": {
+            "tags.keyword": "Vege"
+        }
+    }
+}
+
+# searching with wildcards (can be slow)
+--
+POST /product/_search
+{
+    "query": {
+        "wildcard": {
+            "tags.keyword": "V?ge*able"
+        }
+    }
+}
+
+# searching with regular expressions
+--
+POST /product/_search
+{
+    "query": {
+        "regexp": {
+            "tags.keyword": "Veget[a-zA-Z]+ble"
+        }
+    }
+}
+
+--
+GET /product/_search
+{
+  "query": {
+    "terms": {
+      "name": [
+        "Tomato",
+        "Paste"
+      ]
+    }
+  }
+}
