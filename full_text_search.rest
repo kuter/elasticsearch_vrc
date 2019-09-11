@@ -1,0 +1,87 @@
+http://127.0.0.1:9200
+--
+
+--
+GET /recipe/_mapping
+
+--
+POST /recipe/_search
+{
+    "query": {
+        "match": {
+            "title": "Recipes with pasta or spaghetti"
+        }
+    }
+}
+
+--
+POST /recipe/_search
+{
+    "_source": ["title"],
+    "query": {
+        "match": {
+            "title": {
+                "query": "pasta spaghetti",
+                "operator": "and"
+            }
+        }
+    }
+}
+
+--
+POST /recipe/_search
+{
+    "_source": ["title"],
+    "query": {
+        "match_phrase": {
+            "title": "spaghetti puttanesca"
+        }
+    }
+}
+
+# searching multiple fields
+--
+POST /recipe/_search
+{
+    "_source": ["title", "description"],
+    "query": {
+        "multi_match": {
+            "query": "pasta",
+            "fields": ["title", "description"]
+        }
+    }
+}
+
+--
+GET /recipe/_search
+{
+    "query": {
+        "match": {
+            "title": "pasta with parmesan and spinach"
+        }
+    }
+}
+
+--
+GET /recipe/_search
+{
+    "query": {
+        "match": {
+            "title": {
+                "query": "pasta carbonara",
+                "operator": "and"
+            }
+        }
+    }
+}
+
+--
+GET /recipe/_search
+{
+    "query": {
+        "multi_match": {
+            "query": "pasta carbonara",
+            "fields": ["title", "description"]
+        }
+    }
+}
