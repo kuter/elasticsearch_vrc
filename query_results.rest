@@ -1,0 +1,99 @@
+http://127.0.0.1:9200
+--
+
+# print results in YAML format
+--
+GET /product/_search?format=yaml
+
+# pretty print in curl request
+--
+GET /product/_search/?pretty
+
+# source filtering
+--
+POST /recipe/_search
+{
+    "_source": ["created", "ingredients.*"],
+    "query": {
+        "match": {"title": "pasta"}
+    }
+}
+
+# filtering includes/excludes
+--
+POST /recipe/_search
+{
+    "_source": {
+        "includes": "ingredients.*",
+        "excludes": "ingredients.name"
+    },
+    "query": {
+        "match": {"title": "pasta"}
+    }
+}
+
+# control maximum number of hits
+--
+POST /recipe/_search
+{
+    "size": 2,
+    "_source": false,
+    "query": {
+        "match": {
+            "title": "pasta"
+        }
+    }
+}
+
+# specifing an offset
+--
+POST /recipe/_search
+{
+    "size": 2,
+    "from": 2,
+    "_source": false,
+    "query": {
+        "match": {
+            "title": "pasta"
+        }
+    }
+}
+
+# sorting results
+--
+POST /recipe/_search
+{
+    "_source": false,
+    "query": {
+        "match_all": {}
+    },
+    "sort": [
+        "preparation_time_minutes"
+    ]
+}
+
+--
+POST /recipe/_search
+{
+    "_source": "created",
+    "query": {
+        "match_all": {}
+    },
+    "sort": [
+        {"created": "desc"}
+    ]
+}
+
+# sorting by two fields
+--
+POST /recipe/_search
+{
+    "_source": ["preparation_time_minutes", "created"],
+    "query": {
+        "match_all": {}
+    },
+    "sort": [
+        {"preparation_time_minutes": "desc"}
+        {"created": "desc"}
+    ]
+}
