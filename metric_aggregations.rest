@@ -1,0 +1,122 @@
+http://localhost:9200
+--
+
+--
+GET /order/_search
+
+--
+PUT /order/
+{
+    "mappings": {
+        "properties": {
+            "purchased_at": {
+                "type": "date"
+            },
+            "lines": {
+                "type": "nested",
+                "properties": {
+                    "product_id": {
+                        "type": "integer"
+                    },
+                    "amount": {
+                        "type": "double"
+                    },
+                    "quantity": {
+                        "type": "short"
+                    }
+                }
+            },
+            "total_amount": {
+                "type": "double"
+            },
+            "status": {
+                "type": "keyword"
+            },
+            "sales_channel": {
+                "type": "keyword"
+            },
+            "salesman": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "text"
+                    }
+                }
+            }
+        }
+    }
+}
+
+--
+POST /order/_search
+{
+    "size": 0,
+    "aggs": {
+        "total_sales": {
+            "sum": {
+                "field": "total_amount"
+            }
+        },
+        "avg_sale": {
+            "avg": {
+                "field": "total_amount"
+            }
+        },
+        "min_sale": {
+            "min": {
+                "field": "total_amount"
+            }
+        },
+        "max_sale": {
+            "max": {
+                "field": "total_amount"
+            }
+        }
+
+    }
+}
+
+# calculate an approximate count of distinct salesman
+--
+POST /order/_search
+{
+    "size": 0,
+    "aggs": {
+        "salesman_count": {
+            "cardinality": {
+                "field": "salesman.id"
+            }
+        }
+    }
+}
+
+# get count number of values that are extracted from the aggregated documents
+--
+POST /order/_search
+{
+    "size": 0,
+    "aggs": {
+        "value_count": {
+            "value_count": {
+                "field": "total_amount"
+            }
+        }
+    }
+}
+
+# fancy way of getting count, min, max, avg and sum for field
+--
+POST /order/_search
+{
+    "size": 0,
+    "aggs": {
+        "amount_stats": {
+            "stats": {
+                "field": "total_amount"
+            }
+        }
+    }
+}
