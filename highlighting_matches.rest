@@ -1,0 +1,29 @@
+http://localhost:9200
+--
+
+--
+DELETE /highlight
+
+--
+PUT /highlight
+
+--
+POST /highlight/_doc/1
+{
+    "content": "Witaj swiecie hello world"
+}
+
+--
+POST /highlight/_search
+{
+    "query" : {
+        "match": { "content": "hello" }
+    },
+    "highlight" : {
+        "pre_tags": ["<h1>"],
+        "post_tags": ["</h1>"],
+        "fields" : {
+            "content" : {}
+        }
+    }
+}
