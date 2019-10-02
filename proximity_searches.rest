@@ -1,0 +1,88 @@
+http://localhost:9200
+--
+
+--
+DELETE /proximity/
+
+--
+PUT /proximity/
+
+--
+PUT /proximity/_doc/1
+{
+    "title": "Spicy Sauce"
+}
+
+--
+PUT /proximity/_doc/2
+{
+    
+    "title": "Spicy Tomato Sauce"
+}
+
+--
+PUT /proximity/_doc/3
+{
+    "title": "Spicy Tomato and Garlic Sauce"
+}
+
+--
+PUT /proximity/_doc/4
+{
+    "title": "Tomato Sauce (spicy)"
+}
+
+--
+PUT /proximity/_doc/5
+{
+    "title": "Spicy and very delicious Tomato Sauce"
+}
+
+# +----------+------------+------------+------------+
+# |          | Position 1 | Position 2 | Position 3 |
+# +==========+============+============+============+
+# | Document | spicy      | tomato     | sauce      |
+# | Query    | spicy      | souce      |            |
+# | Slop 1   | spicy      | ->         | sauce      |
+# +----------+------------+------------+------------+
+--
+POST /proximity/_search
+{
+    "query": {
+        "match_phrase": {
+            "title": {
+                "query": "spicy sauce",
+                "slop": 1
+            }
+        }
+    }
+}
+
+# less strict searching
+--
+POST /proximity/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "title": {
+                            "query": "spicy sauce"
+                        }
+                    }
+                }
+            ],
+            "should": [
+                {
+                    "match_phrase": {
+                        "title": {
+                            "query": "spicy sauce",
+                            "slop": 0
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
