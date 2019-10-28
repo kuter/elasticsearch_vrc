@@ -1,5 +1,37 @@
 http://localhost:9200
 --
 
+# show all aliaeses
 --
 GET /_cat/aliases?pretty
+
+# add index to alias
+--
+POST /_aliases
+{
+    "actions": [
+        { "add" : { "index" : "sample_index", "alias" : "test_alias" } }
+    ]
+}
+
+# remove index from alias 
+--
+POST /_aliases
+{
+    "actions": [
+        { "remove" : { "index" : "sample_index", "alias" : "test_alias" } }
+    ]
+}
+
+# preform search using alias
+--
+GET /test_alias/_search
+
+# add indicies as a glob pattern to alias
+--
+POST /_aliases
+{
+    "actions": [
+        {"add": {"index": "test*", "alias": "test_alias"} }
+    ]
+}
