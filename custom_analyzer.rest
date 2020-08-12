@@ -1,0 +1,107 @@
+http://127.0.0.1:9200
+--
+
+--
+DELETE /foo
+
+--
+GET /foo/_mapping
+
+--
+PUT /foo
+
+--
+POST /foo/_close
+
+--
+PUT /foo/_settings
+{
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "tokenizer": "my_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 2,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      }
+    }
+}
+
+--
+POST /foo/_open
+
+--
+PUT /foo/_mapping
+{
+    "properties": {
+        "first_name": {
+            "type": "text",
+            "analyzer": "my_analyzer"
+        },
+        "last_name": {
+            "type": "text",
+            "analyzer": "standard"
+        }
+    }
+}
+
+--
+POST /foo/_doc
+{
+    "first_name": "Darek"
+}
+
+
+--
+POST /foo/_doc
+{
+    "first_name": "Jan",
+    "last_name": "Nowak"
+}
+
+--
+POST /foo/_analyze
+{
+    "tokenizer": "my_tokenizer",
+    "text": "Darek"
+}
+
+--
+GET /foo/_mapping
+
+--
+POST /foo/_search
+{
+    "query": {
+        "match_all": {}
+    }
+}
+
+--
+POST /foo/_search
+{
+    "query": {
+        "match": {
+            "last_name": "Nowak"
+        }
+    }
+}
+
+--
+POST /foo/_search
+{
+    "query": {
+        "match_phrase": {
+            "first_name": "Da"
+        }
+    }
+}
